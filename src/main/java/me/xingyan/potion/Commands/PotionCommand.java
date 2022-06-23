@@ -39,6 +39,7 @@ public class PotionCommand implements CommandExecutor {
             Player player = (Player) sender;
             if(player.hasPermission("potion.admin")){
                 if(args.length==0){
+                    //get=0, effect=1, duration=2, amplifier=3
                     player.sendMessage(prefix+"/potion get <effect> <duration> <amplifier>");
                     player.sendMessage(prefix+"/potion reload");
                     return true;
@@ -74,7 +75,7 @@ public class PotionCommand implements CommandExecutor {
                             secs = "00";
                         }
                         String potionname = WordUtils.capitalizeFully(vanillatobukkit.tovanilla(PotionEffectType.getByName(vanillatobukkit.tobukkit(args[1])).getName()).toLowerCase(Locale.ROOT).replace("_", " "));
-                        String potionlevel = RomanNumber.toRoman(Integer.parseInt(args[2]));
+                        String potionlevel = RomanNumber.toRoman(Integer.parseInt(args[3]));
                         String potiontime = "("+mins+":"+secs+")";
                         String finalget = messagesuccessfulget.replace("%potion%", potionname).replace("%level%", potionlevel).replace("%time%", potiontime);
                         player.sendMessage(prefix+finalget);
