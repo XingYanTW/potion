@@ -5,6 +5,8 @@ import me.xingyan.potion.Commands.PotionCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+
 public final class Potion extends JavaPlugin {
 
     public static Plugin plugin = null;
@@ -15,6 +17,7 @@ public final class Potion extends JavaPlugin {
         plugin = this;
         getCommand("potion").setExecutor(new PotionCommand());
         getCommand("potion").setTabCompleter(new CompleterTab());
+        saveDefaultConfig();
     }
 
     @Override

@@ -1,0 +1,14 @@
+prefix: '&5[&dPotion&5] &c'
+message:
+  reload: "&aReloaded!"
+  successful:
+    get: "Successful Gave A %potion% %level% Potion! %time%"
+  error:
+    playeronly: "&cPlayer Only Command"
+    notfound: "&cPotion Not Found!"
+    amplifier:
+      bigger: "&cDuration Must Bigger Than 0"
+      smaller: "&cDuration Must Smaller Than 536870912"
+    duration:
+      bigger: "&cAmplifier Must Bigger Than 0"
+      smaller: "&cAmplifier Must Smaller Than 129"

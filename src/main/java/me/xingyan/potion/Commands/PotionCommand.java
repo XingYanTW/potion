@@ -3,7 +3,7 @@ package me.xingyan.potion.Commands;
 import me.xingyan.potion.Statics.PotionColor;
 import me.xingyan.potion.Statics.RomanNumber;
 import me.xingyan.potion.Statics.vanillatobukkit;
-import org.apache.commons.lang.StringUtils;
+import me.xingyan.potion.config;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -24,49 +24,71 @@ import java.util.Locale;
 public class PotionCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+
+        String prefix = ChatColor.translateAlternateColorCodes('&', new config().getPrefix());
+        String messageerrornotfound = ChatColor.translateAlternateColorCodes('&', new config().getMessageerrornotfound());
+        String messageerroramplifierbigger = ChatColor.translateAlternateColorCodes('&', new config().getMessageerroramplifierbigger());
+        String messageerroramplifiersmaller = ChatColor.translateAlternateColorCodes('&', new config().getMessageerroramplifiersmaller());
+        String messageerrordurationbigger = ChatColor.translateAlternateColorCodes('&', new config().getMessageerrordurationbigger());
+        String messageerrordurationsmaller = ChatColor.translateAlternateColorCodes('&', new config().getMessageerrordurationsmaller());
+        String messagesuccessfulget = ChatColor.translateAlternateColorCodes('&', new config().getMessagesuccessfulget());
+        String messagereload = ChatColor.translateAlternateColorCodes('&', new config().getMessagereload());
+        String messageerrorplayeronly = ChatColor.translateAlternateColorCodes('&', new config().getMessageerrorplayeronly());
+
         if(sender instanceof Player){
             Player player = (Player) sender;
             if(player.hasPermission("potion.admin")){
                 if(args.length==0){
-                    player.sendMessage("Usage:/potion <effect> <duration> <amplifier>");
+                    player.sendMessage(prefix+"/potion get <effect> <duration> <amplifier>");
+                    player.sendMessage(prefix+"/potion reload");
                     return true;
                 }
-                if(args.length>=3){
-                    if(Long.parseLong(args[2])<=0) {
-                        player.sendMessage(ChatColor.RED+"Amplifier Must Bigger Than 0");
+                if(args.length>=4){
+                    if(args[0].equals("get")){
+                        if(Long.parseLong(args[3])<=0) {
+                            player.sendMessage(prefix+messageerroramplifiersmaller);
+                            return true;
+                        }
+                        if(Long.parseLong(args[3])>=129) {
+                            player.sendMessage(prefix+ChatColor.RED+messageerroramplifierbigger);
+                            return true;
+                        }
+                        if(Long.parseLong(args[2])>=Long.parseLong("536870912")){
+                            player.sendMessage(prefix+messageerrordurationbigger);
+                            return true;
+                        }
+                        if(Long.parseLong(args[2])<=Long.parseLong("0")){
+                            player.sendMessage(prefix+messageerrordurationsmaller);
+                            return true;
+                        }
+                        if(PotionEffectType.getByName(vanillatobukkit.tobukkit(args[1])) == null){
+                            player.sendMessage(prefix+messageerrornotfound);
+                            return true;
+                        }
+                        player.getInventory().addItem(createpotion(PotionEffectType.getByName(vanillatobukkit.tobukkit(args[1])), Integer.parseInt(args[2])*20, Integer.parseInt(args[3])-1));
+                        int remainder = Integer.parseInt(args[2]);
+                        int mins = remainder / 60;
+                        remainder = remainder - mins * 60;
+                        String secs = String.valueOf(remainder);
+                        if(secs.equals("0")){
+                            secs = "00";
+                        }
+                        String potionname = WordUtils.capitalizeFully(vanillatobukkit.tovanilla(PotionEffectType.getByName(vanillatobukkit.tobukkit(args[1])).getName()).toLowerCase(Locale.ROOT).replace("_", " "));
+                        String potionlevel = RomanNumber.toRoman(Integer.parseInt(args[2]));
+                        String potiontime = "("+mins+":"+secs+")";
+                        String finalget = messagesuccessfulget.replace("%potion%", potionname).replace("%level%", potionlevel).replace("%time%", potiontime);
+                        player.sendMessage(prefix+finalget);
                         return true;
                     }
-                    if(Long.parseLong(args[2])>=129) {
-                        player.sendMessage(ChatColor.RED+"Amplifier Must Smaller Than 129");
-                        return true;
-                    }
-                    if(Long.parseLong(args[1])>=Long.parseLong("536870912")){
-                        player.sendMessage(ChatColor.RED+"duration Must Smaller Than 536870912");
-                        return true;
-                    }
-                    if(Long.parseLong(args[1])<=Long.parseLong("0")){
-                        player.sendMessage(ChatColor.RED+"duration Must Bigger Than 0");
-                        return true;
-                    }
-                    //player.getInventory().addItem(createpotion(PotionEffectType.getByName(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2])));
-                    if(PotionEffectType.getByName(vanillatobukkit.tobukkit(args[0])) == null){
-                        player.sendMessage(ChatColor.RED+"Potion Not Found!");
-                        return true;
-                    }
-                    player.getInventory().addItem(createpotion(PotionEffectType.getByName(vanillatobukkit.tobukkit(args[0])), Integer.parseInt(args[1])*20, Integer.parseInt(args[2])-1));
-                    int remainder = Integer.parseInt(args[1]);
-                    int mins = remainder / 60;
-                    remainder = remainder - mins * 60;
-                    String secs = String.valueOf(remainder);
-                    if(secs.equals("0")){
-                        secs = "00";
-                    }
-                    player.sendMessage(ChatColor.GREEN+"Successful Gave A "+ WordUtils.capitalizeFully(vanillatobukkit.tovanilla(PotionEffectType.getByName(vanillatobukkit.tobukkit(args[0])).getName()).toLowerCase(Locale.ROOT).replace("_", " "))+" "+RomanNumber.toRoman(Integer.parseInt(args[2]))+" Potion! ("+mins+":"+secs+")");
+                }
+                if(args[0].equals("reload")){
+                    new config().reloadconfig();
+                    player.sendMessage(prefix+messagereload);
                     return true;
                 }
             }
         }else{
-            sender.sendMessage(ChatColor.RED+"Player Only Command.");
+            sender.sendMessage(prefix+messageerrorplayeronly);
             return true;
         }
 
