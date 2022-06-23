@@ -2,7 +2,9 @@ package me.xingyan.potion.Commands;
 
 import me.xingyan.potion.Statics.PotionColor;
 import me.xingyan.potion.Statics.RomanNumber;
+import me.xingyan.potion.Statics.vanillatobukkit;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -30,12 +32,28 @@ public class PotionCommand implements CommandExecutor {
                     return true;
                 }
                 if(args.length>=3){
+                    if(Long.parseLong(args[2])<=0) {
+                        player.sendMessage(ChatColor.RED+"Amplifier Must Bigger Than 0");
+                        return true;
+                    }
+                    if(Long.parseLong(args[2])>=129) {
+                        player.sendMessage(ChatColor.RED+"Amplifier Must Smaller Than 129");
+                        return true;
+                    }
+                    if(Long.parseLong(args[1])>=Long.parseLong("536870912")){
+                        player.sendMessage(ChatColor.RED+"duration Must Smaller Than 536870912");
+                        return true;
+                    }
+                    if(Long.parseLong(args[1])<=Long.parseLong("0")){
+                        player.sendMessage(ChatColor.RED+"duration Must Bigger Than 0");
+                        return true;
+                    }
                     //player.getInventory().addItem(createpotion(PotionEffectType.getByName(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2])));
-                    if(PotionEffectType.getByName(args[0]) == null){
+                    if(PotionEffectType.getByName(vanillatobukkit.tobukkit(args[0])) == null){
                         player.sendMessage(ChatColor.RED+"Potion Not Found!");
                         return true;
                     }
-                    player.getInventory().addItem(createpotion(PotionEffectType.getByName(args[0]), Integer.parseInt(args[1])*20, Integer.parseInt(args[2])-1));
+                    player.getInventory().addItem(createpotion(PotionEffectType.getByName(vanillatobukkit.tobukkit(args[0])), Integer.parseInt(args[1])*20, Integer.parseInt(args[2])-1));
                     int remainder = Integer.parseInt(args[1]);
                     int mins = remainder / 60;
                     remainder = remainder - mins * 60;
@@ -43,7 +61,7 @@ public class PotionCommand implements CommandExecutor {
                     if(secs.equals("0")){
                         secs = "00";
                     }
-                    player.sendMessage(ChatColor.GREEN+"Successful Gave A "+ StringUtils.capitalize(PotionEffectType.getByName((args[0])).getName().toLowerCase(Locale.ROOT))+" "+RomanNumber.toRoman(Integer.parseInt(args[2]))+" Potion! ("+mins+":"+secs+")");
+                    player.sendMessage(ChatColor.GREEN+"Successful Gave A "+ WordUtils.capitalizeFully(vanillatobukkit.tovanilla(PotionEffectType.getByName(vanillatobukkit.tobukkit(args[0])).getName()).toLowerCase(Locale.ROOT).replace("_", " "))+" "+RomanNumber.toRoman(Integer.parseInt(args[2]))+" Potion! ("+mins+":"+secs+")");
                     return true;
                 }
             }
@@ -65,7 +83,7 @@ public class PotionCommand implements CommandExecutor {
         pm.setColor(Color.fromRGB(PotionColor.color(effect)));
         is.setItemMeta(pm);
         ItemMeta im = is.getItemMeta();
-        im.setDisplayName(ChatColor.WHITE+StringUtils.capitalize(effect.getName().toLowerCase(Locale.ROOT))+" Potion");
+        im.setDisplayName(ChatColor.WHITE+WordUtils.capitalizeFully(vanillatobukkit.tovanilla(effect.getName()).toLowerCase(Locale.ROOT).replace("_", " "))+" Potion");
         is.setItemMeta(im);
         return is;
     }

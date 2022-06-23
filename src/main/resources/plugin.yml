@@ -4,4 +4,4 @@ main: me.xingyan.potion.Potion
 api-version: 1.18
 commands:
   potion:
-    usage: /<command>
+    usage: /<command> <effect> <duration> <amplifier>
