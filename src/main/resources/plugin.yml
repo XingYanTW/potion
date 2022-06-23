@@ -1,0 +1,7 @@
+name: Potion
+version: '${project.version}'
+main: me.xingyan.potion.Potion
+api-version: 1.18
+commands:
+  potion:
+    usage: /<command>
